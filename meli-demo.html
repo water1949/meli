@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Méli 美发管家 · 你的店，还缺一位 Co-CEO</title>
+<meta name="description" content="专为美发门店打造的会员管理 SaaS：收银自动算价、会员储值、次卡年卡、营销活动、数据分析。一位 24 小时在岗、不用发工资的 Co-CEO。">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    color:#fff;
+    background:
+      radial-gradient(1200px 820px at 82% -12%, rgba(147,197,253,0.26) 0%, transparent 60%),
+      radial-gradient(900px 640px at -12% 34%, rgba(129,140,248,0.15) 0%, transparent 62%),
+      radial-gradient(760px 560px at 104% 102%, rgba(251,191,36,0.13) 0%, transparent 58%),
+      linear-gradient(158deg, #0E2252 0%, #1E3A8A 38%, #2563EB 72%, #3B82F6 100%);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+  }
+  body::before {
+    content:""; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  }
+  .bubbles { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden; }
+  .bubble { position:absolute; border-radius:50%; }
+
+  /* static orbs (login-style) */
+  .orb-1 {
+    right:-140px; top:-140px; width:480px; height:480px;
+    background:rgba(255,255,255,0.06);
+    animation:sway 26s ease-in-out infinite;
+  }
+  .orb-2 {
+    left:-110px; bottom:-120px; width:380px; height:380px;
+    background:rgba(232,197,71,0.10);
+    animation:sway 30s ease-in-out infinite reverse;
+  }
+  .orb-3 {
+    right:-30px; top:30%; width:300px; height:300px;
+    border:1px solid rgba(255,255,255,0.10);
+    animation:sway 22s ease-in-out infinite;
+  }
+  @keyframes sway {
+    0%,100% { transform:translate(0,0); }
+    33% { transform:translate(18px,-14px); }
+    66% { transform:translate(-12px,10px); }
+  }
+
+  /* rising small bubbles */
+  .bub {
+    bottom:-80px;
+    background:radial-gradient(circle at 35% 30%, rgba(255,255,255,0.28), rgba(255,255,255,0.06) 60%, rgba(255,255,255,0) 72%);
+    border:1px solid rgba(255,255,255,0.10);
+    animation:rise 16s linear infinite;
+    opacity:0;
+  }
+  .bub-1 { left:6%;  width:26px; height:26px; animation-delay:0s; }
+  .bub-2 { left:14%; width:14px; height:14px; animation-duration:21s; animation-delay:3s; }
+  .bub-3 { left:24%; width:38px; height:38px; animation-duration:27s; animation-delay:1s; }
+  .bub-4 { left:38%; width:18px; height:18px; animation-duration:18s; animation-delay:6s; }
+  .bub-5 { left:55%; width:30px; height:30px; animation-duration:24s; animation-delay:2s; }
+  .bub-6 { left:68%; width:15px; height:15px; animation-duration:17s; animation-delay:5s; }
+  .bub-7 { left:78%; width:42px; height:42px; animation-duration:29s; animation-delay:0.5s; }
+  .bub-8 { left:90%; width:20px; height:20px; animation-duration:20s; animation-delay:4s; }
+  @keyframes rise {
+    0%   { transform:translateY(0) translateX(0); opacity:0; }
+    8%   { opacity:0.8; }
+    90%  { opacity:0.35; }
+    100% { transform:translateY(-120vh) translateX(22px); opacity:0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .bubble { animation:none !important; opacity:0; }
+  }
+  .wrap { position:relative; z-index:1; max-width:1080px; margin:0 auto; padding:0 24px; }
+
+  /* ---- top bar ---- */
+  .topbar { display:flex; align-items:center; justify-content:space-between; padding:26px 0 18px; }
+  .brand { display:flex; align-items:center; gap:13px; }
+  .brand-mark {
+    width:44px; height:44px; border-radius:12px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08));
+    border:1px solid rgba(255,255,255,0.40);
+    display:flex; align-items:center; justify-content:center;
+    color:#FFE58F; font-size:23px; font-weight:700;
+    box-shadow: 0 8px 24px rgba(15,23,42,0.28);
+  }
+  .brand-name { font-size:19px; font-weight:600; letter-spacing:2px; }
+  .brand-name .sub { display:block; font-size:9px; color:rgba(255,255,255,0.55); letter-spacing:4px; font-weight:500; margin-top:3px; font-family: Georgia,'Times New Roman',serif; font-style:italic; }
+  .top-cta {
+    font-size:13px; color:#0E2252; font-weight:600; letter-spacing:1px;
+    background:#FFE58F; padding:9px 18px; border-radius:100px;
+    text-decoration:none; box-shadow: 0 8px 20px rgba(255,229,143,0.25);
+  }
+
+  /* ---- hero ---- */
+  .hero { text-align:center; padding:64px 0 8px; }
+  .eyebrow {
+    display:inline-flex; align-items:center; gap:14px; margin-bottom:24px;
+    color:#FFE58F; font-size:13px; font-weight:500; letter-spacing:5px;
+    font-family: Georgia,'Times New Roman',serif; font-style:italic;
+  }
+  .eyebrow::before, .eyebrow::after { content:""; width:40px; height:1px; background: linear-gradient(90deg, transparent, rgba(255,229,143,0.6)); }
+  .eyebrow::after { background: linear-gradient(90deg, rgba(255,229,143,0.6), transparent); }
+  .hero h1 {
+    font-size:46px; line-height:1.25; font-weight:600; letter-spacing:3px;
+    font-family: Georgia,'Songti SC','STSong','SimSun',serif;
+  }
+  .hero h1 .hl { color:#FFE58F; }
+  .hero .sub { margin-top:18px; font-size:18px; color:rgba(255,255,255,0.72); letter-spacing:1px; }
+  .hero .pill { margin-top:28px; }
+  .hero .pill span {
+    display:inline-block; margin:0 6px 10px; padding:7px 16px; border-radius:100px;
+    font-size:13px; color:rgba(255,255,255,0.9); letter-spacing:1px;
+    background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.16);
+  }
+  .hero-btns { margin-top:34px; display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+  .btn-primary {
+    display:inline-block; padding:15px 40px; border-radius:100px;
+    font-size:16px; font-weight:700; letter-spacing:2px; color:#0E2252;
+    background:linear-gradient(135deg, #FFE58F, #FFC53D); text-decoration:none;
+    box-shadow: 0 14px 34px rgba(255,229,143,0.28);
+  }
+  .btn-ghost {
+    display:inline-block; padding:14px 34px; border-radius:100px;
+    font-size:15px; font-weight:600; letter-spacing:2px; color:#fff;
+    border:1px solid rgba(255,255,255,0.35); text-decoration:none;
+    background:rgba(255,255,255,0.06);
+  }
+
+  /* ---- screenshot frame ---- */
+  .frame {
+    margin-top:56px; border-radius:20px; overflow:hidden;
+    border:1px solid rgba(255,255,255,0.22);
+    box-shadow: 0 40px 90px rgba(6,18,46,0.55), 0 0 0 12px rgba(255,255,255,0.04);
+    background:#fff;
+  }
+  .frame img { display:block; width:100%; height:auto; }
+
+  /* ---- section ---- */
+  .sec { padding:80px 0 20px; }
+  .sec-head { text-align:center; margin-bottom:52px; }
+  .sec-eyebrow {
+    color:#FFE58F; font-size:13px; letter-spacing:6px; font-weight:500; margin-bottom:16px;
+    font-family: Georgia,'Times New Roman',serif; font-style:italic;
+  }
+  .sec-head h2 {
+    font-size:34px; font-weight:600; letter-spacing:3px;
+    font-family: Georgia,'Songti SC','STSong','SimSun',serif;
+  }
+  .sec-head h2 .hl { color:#FFE58F; }
+  .sec-head .d { margin-top:12px; font-size:15px; color:rgba(255,255,255,0.6); letter-spacing:1px; }
+
+  /* ---- pain ---- */
+  .pain-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; }
+  .pain {
+    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.14);
+    border-radius:18px; padding:28px 24px; text-align:center;
+  }
+  .pain .q { color:rgba(255,255,255,0.4); font-size:13px; letter-spacing:3px; margin-bottom:10px; }
+  .pain .t { font-size:19px; font-weight:600; letter-spacing:1px; line-height:1.5; }
+
+  /* ---- features ---- */
+  .feat-grid { display:grid; grid-template-columns:repeat(2, 1fr); gap:18px; }
+  .feat {
+    display:flex; gap:20px; align-items:flex-start;
+    background: linear-gradient(135deg, rgba(255,255,255,0.10), rgba(255,255,255,0.05));
+    border:1px solid rgba(255,255,255,0.16); border-radius:18px;
+    padding:26px 26px; position:relative; overflow:hidden;
+  }
+  .feat::before {
+    content:""; position:absolute; top:0; left:26px; right:26px; height:1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+  }
+  .feat .ico {
+    flex:none; width:54px; height:54px; border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+    background: rgba(255,255,255,0.12); border:1px solid rgba(255,255,255,0.18);
+  }
+  .feat .ico svg { width:28px; height:28px; }
+  .feat .t { font-size:20px; font-weight:700; letter-spacing:1px; margin-bottom:8px; }
+  .feat .d { font-size:14px; color:rgba(255,255,255,0.72); line-height:1.7; }
+  .feat .d b { color:#FFE58F; font-weight:600; }
+  .feat .tip { margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; }
+  .feat .tip span {
+    font-size:12px; color:rgba(255,255,255,0.85); letter-spacing:1px;
+    padding:4px 12px; border-radius:100px; background:rgba(255,255,255,0.07);
+    border:1px solid rgba(255,255,255,0.16);
+  }
+
+  /* ---- screens ---- */
+  .screen-tabs { display:flex; gap:8px; justify-content:center; flex-wrap:wrap; margin-bottom:34px; }
+  .screen-tabs button {
+    font-size:14px; letter-spacing:1px; color:rgba(255,255,255,0.75);
+    padding:9px 18px; border-radius:100px; cursor:pointer;
+    background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.16);
+    font-family:inherit;
+  }
+  .screen-tabs button.on { background:rgba(255,229,143,0.16); border-color:rgba(255,229,143,0.55); color:#FFE58F; }
+  .screen-view { display:none; }
+  .screen-view.on { display:block; animation:fadein .4s ease; }
+  .screen-view .cap { text-align:center; margin-top:18px; font-size:14px; color:rgba(255,255,255,0.65); letter-spacing:1px; }
+  @keyframes fadein { from { opacity:0; transform:translateY(8px);} to { opacity:1; transform:none;} }
+
+  /* ---- modules ---- */
+  .mod-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; }
+  .mod {
+    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.14);
+    border-radius:16px; padding:22px 20px;
+  }
+  .mod .m { font-size:16px; font-weight:700; letter-spacing:1px; margin-bottom:6px; }
+  .mod .s { font-size:12.5px; color:rgba(255,255,255,0.6); line-height:1.6; }
+
+  /* ---- compare ---- */
+  .cmp { width:100%; border-collapse:collapse; border-radius:16px; overflow:hidden; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.14); }
+  .cmp th, .cmp td { padding:16px 18px; font-size:14px; text-align:left; border-bottom:1px solid rgba(255,255,255,0.10); }
+  .cmp th { color:#FFE58F; font-weight:600; letter-spacing:1px; background:rgba(255,255,255,0.04); }
+  .cmp td.meli { color:#FFE58F; font-weight:600; }
+  .cmp td.trad { color:rgba(255,255,255,0.55); }
+  .cmp tr:last-child td { border-bottom:none; }
+
+  /* ---- pricing ---- */
+  .price-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; }
+  .price {
+    background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.16);
+    border-radius:20px; padding:34px 26px; text-align:center; position:relative;
+  }
+  .price.hot { border-color:rgba(255,229,143,0.6); background:linear-gradient(160deg, rgba(255,229,143,0.14), rgba(255,255,255,0.04)); }
+  .price .flag { position:absolute; top:-12px; left:50%; transform:translateX(-50%);
+    font-size:12px; letter-spacing:2px; color:#0E2252; font-weight:700;
+    background:#FFE58F; padding:5px 14px; border-radius:100px; }
+  .price .p-name { font-size:17px; font-weight:600; letter-spacing:2px; }
+  .price .p-price { margin:20px 0 4px; font-size:40px; font-weight:700; font-family: Georgia,serif; }
+  .price .p-price small { font-size:14px; font-weight:400; color:rgba(255,255,255,0.6); font-family:inherit; }
+  .price .p-note { font-size:12px; color:rgba(255,255,255,0.5); margin-bottom:22px; }
+  .price ul { list-style:none; font-size:13px; line-height:2.1; color:rgba(255,255,255,0.8); text-align:left; padding-left:6px; }
+  .price ul li::before { content:"·"; color:#FFE58F; margin-right:8px; }
+
+  /* ---- final cta ---- */
+  .final-cta { text-align:center; padding:90px 0 40px; }
+  .final-cta h2 { font-size:38px; font-weight:600; letter-spacing:3px; font-family: Georgia,'Songti SC','STSong','SimSun',serif; line-height:1.4; }
+  .final-cta h2 .hl { color:#FFE58F; }
+  .final-cta .sub { margin:18px 0 36px; font-size:16px; color:rgba(255,255,255,0.7); letter-spacing:1px; }
+  .contact-box {
+    max-width:480px; margin:0 auto; padding:28px; border-radius:20px;
+    background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.18);
+  }
+  .contact-box .row { display:flex; align-items:center; justify-content:space-between; padding:11px 0; font-size:15px; border-bottom:1px dashed rgba(255,255,255,0.14); }
+  .contact-box .row:last-child { border-bottom:none; }
+  .contact-box .k { color:rgba(255,255,255,0.55); letter-spacing:2px; font-size:13px; }
+  .contact-box .v { font-weight:600; letter-spacing:1px; }
+
+  footer { text-align:center; padding:44px 0 30px; font-size:12px; color:rgba(255,255,255,0.4); letter-spacing:2px; border-top:1px solid rgba(255,255,255,0.10); margin-top:70px; }
+
+  /* ---- mobile ---- */
+  @media (max-width:760px) {
+    .wrap { padding:0 16px; }
+    .hero h1 { font-size:32px; }
+    .hero .sub { font-size:15px; }
+    .hero { padding-top:40px; }
+    .sec { padding:60px 0 10px; }
+    .sec-head h2 { font-size:27px; }
+    .pain-grid, .feat-grid, .price-grid { grid-template-columns:1fr; }
+    .mod-grid { grid-template-columns:1fr 1fr; }
+    .feat { padding:22px 20px; }
+    .frame { margin-top:40px; border-radius:14px; box-shadow: 0 24px 60px rgba(6,18,46,0.5), 0 0 0 8px rgba(255,255,255,0.04); }
+    .final-cta h2 { font-size:28px; }
+    .top-cta { padding:8px 14px; font-size:12px; }
+  }
+  @media (max-width:420px) {
+    .mod-grid { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="bubbles" aria-hidden="true">
+  <div class="bubble orb-1"></div>
+  <div class="bubble orb-2"></div>
+  <div class="bubble orb-3"></div>
+  <div class="bubble bub bub-1"></div>
+  <div class="bubble bub bub-2"></div>
+  <div class="bubble bub bub-3"></div>
+  <div class="bubble bub bub-4"></div>
+  <div class="bubble bub bub-5"></div>
+  <div class="bubble bub bub-6"></div>
+  <div class="bubble bub bub-7"></div>
+  <div class="bubble bub bub-8"></div>
+</div>
+<div class="wrap">
+
+  <!-- top bar -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">M</div>
+      <div class="brand-name">Méli 美发管家<span class="sub">Co-CEO for Salon</span></div>
+    </div>
+    <a class="top-cta" href="#contact">联系试用</a>
+  </div>
+
+  <!-- hero -->
+  <section class="hero">
+    <div class="eyebrow">Co-CEO for Salon · 美发门店专属</div>
+    <h1>你的店，<br><span class="hl">还缺一位 Co-CEO</span></h1>
+    <div class="sub">收银、会员、卡项、营销、报表 ——<br>一位 24 小时在岗、不用发工资的经营助手</div>
+    <div class="pill">
+      <span>收银自动算价</span><span>会员储值</span><span>次卡年卡</span><span>积分等级</span><span>营销活动</span><span>经营报表</span>
+    </div>
+    <div class="hero-btns">
+      <a class="btn-primary" href="#contact">免费试用</a>
+      <a class="btn-ghost" href="#screens">看系统长什么样</a>
+    </div>
+  </section>
+
+  <!-- dashboard screenshot -->
+  <div class="frame"><img src="screens/dashboard.png" alt="Méli 经营看板"></div>
+
+  <!-- pain -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="sec-eyebrow">Do you have this problem?</div>
+      <h2>这些账，<span class="hl">还在手工算？</span></h2>
+    </div>
+    <div class="pain-grid">
+      <div class="pain"><div class="q">收银</div><div class="t">优惠算错<br>漏算多算是常事</div></div>
+      <div class="pain"><div class="q">会员</div><div class="t">会员卡记录<br>还靠本子和记忆</div></div>
+      <div class="pain"><div class="q">经营</div><div class="t">月底盘点<br>不知道钱花哪了</div></div>
+    </div>
+  </section>
+
+  <!-- features -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="sec-eyebrow">What a Co-CEO does</div>
+      <h2>一位 Co-CEO，<span class="hl">管好店里的事</span></h2>
+      <div class="d">从收银到留客，从营销到决策，每一件都自动帮你算好</div>
+    </div>
+    <div class="feat-grid">
+      <div class="feat">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="6" y1="15" x2="8" y2="15"/></svg></div>
+        <div class="body">
+          <div class="t">收银自动算价</div>
+          <div class="d">等级折扣、营销活动、积分抵现<b>自动叠加</b>，250ms 实时报价，每笔账都有明细可查</div>
+          <div class="tip"><span>零心算</span><span>零漏算</span></div>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#FFE58F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><line x1="8" y1="9" x2="8" y2="12"/><line x1="12" y1="9" x2="12" y2="12"/><line x1="16" y1="9" x2="16" y2="12"/><circle cx="8" cy="15" r="0.5"/><circle cx="12" cy="15" r="0.5"/><circle cx="16" cy="15" r="0.5"/></svg></div>
+        <div class="body">
+          <div class="t">卡项闭环</div>
+          <div class="d">储值卡、次卡、年卡，<b>一键购卡</b>、收银自动抵扣、到期自动校验，告别本子记账</div>
+          <div class="tip"><span>一键购卡</span><span>到期校验</span></div>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg></div>
+        <div class="body">
+          <div class="t">营销活动</div>
+          <div class="d">折扣、满减、新客礼、生日礼，<b>按服务项目定向</b>，收银时自动参与，不用手动算</div>
+          <div class="tip"><span>按项目定向</span><span>收银自动参与</span></div>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#FFE58F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 12a5 5 0 0 1 10 0"/><path d="M6 12h12l-1.5 6H7.5z"/><line x1="12" y1="8" x2="12" y2="6"/></svg></div>
+        <div class="body">
+          <div class="t">等级 · 积分</div>
+          <div class="d">金卡银卡<b>消费自动升级</b>，积分抵现规则可配置，越消费越划算，把老会员留下来</div>
+          <div class="tip"><span>自动升级</span><span>积分抵现</span></div>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#93C5FD" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
+        <div class="body">
+          <div class="t">智能提醒</div>
+          <div class="d">余额不足、卡快到期、会员沉睡，<b>自动通知</b>，一个铃铛直达处理，一个都漏不掉</div>
+          <div class="tip"><span>余额不足</span><span>卡到期</span><span>沉睡召回</span></div>
+        </div>
+      </div>
+      <div class="feat">
+        <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#FFE58F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/><line x1="4" y1="21" x2="20" y2="21"/></svg></div>
+        <div class="body">
+          <div class="t">经营报表</div>
+          <div class="d">营收趋势、热门项目、技师业绩、会员增长、支付占比，<b>数据说话</b>，决策有据可依</div>
+          <div class="tip"><span>趋势报表</span><span>业绩排行</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- real screens -->
+  <section class="sec" id="screens">
+    <div class="sec-head">
+      <div class="sec-eyebrow">Real product, real screens</div>
+      <h2>不是 PPT，是<span class="hl">真系统</span></h2>
+      <div class="d">点一点标签，看看每个页面长什么样</div>
+    </div>
+    <div class="screen-tabs">
+      <button data-v="checkout" class="on">收银开单</button>
+      <button data-v="members">会员管理</button>
+      <button data-v="booking">预约排班</button>
+      <button data-v="cards">卡项套餐</button>
+      <button data-v="marketing">营销活动</button>
+      <button data-v="analytics">数据分析</button>
+      <button data-v="orders">订单管理</button>
+    </div>
+    <div class="screen-view on" data-view="checkout">
+      <div class="frame"><img src="screens/checkout.png" alt="收银开单"></div>
+      <div class="cap">收银开单 · 选顾客勾项目，折扣活动自动算好，应收直接显示</div>
+    </div>
+    <div class="screen-view" data-view="members">
+      <div class="frame"><img src="screens/members.png" alt="会员管理"></div>
+      <div class="cap">会员管理 · 等级、余额、积分、到店次数，详情一键看全</div>
+    </div>
+    <div class="screen-view" data-view="booking">
+      <div class="frame"><img src="screens/booking.png" alt="预约排班"></div>
+      <div class="cap">预约排班 · 项目、技师、时间状态，进度一眼掌握</div>
+    </div>
+    <div class="screen-view" data-view="cards">
+      <div class="frame"><img src="screens/cards.png" alt="卡项套餐"></div>
+      <div class="cap">卡项套餐 · 储值卡、次卡、年卡，类型权益灵活配置</div>
+    </div>
+    <div class="screen-view" data-view="marketing">
+      <div class="frame"><img src="screens/marketing.png" alt="营销活动"></div>
+      <div class="cap">营销活动 · 折扣、满减、新客礼、生日礼，收银自动参与</div>
+    </div>
+    <div class="screen-view" data-view="analytics">
+      <div class="frame"><img src="screens/analytics.png" alt="数据分析"></div>
+      <div class="cap">数据分析 · 营收趋势、热门项目、技师业绩，用数据经营</div>
+    </div>
+    <div class="screen-view" data-view="orders">
+      <div class="frame"><img src="screens/orders.png" alt="订单管理"></div>
+      <div class="cap">订单管理 · 每一笔收银、退款都有明细，对账轻松</div>
+    </div>
+  </section>
+
+  <!-- compare -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="sec-eyebrow">Why Méli</div>
+      <h2>从手工记账，<span class="hl">到 Co-CEO</span></h2>
+    </div>
+    <table class="cmp">
+      <tr><th></th><th>手工 / 传统</th><th>Méli Co-CEO</th></tr>
+      <tr><td>算账</td><td class="trad">心算优惠，经常对不上</td><td class="meli">系统自动算，分毫不差</td></tr>
+      <tr><td>会员</td><td class="trad">本子记卡，谁充了多少靠回忆</td><td class="meli">余额、积分、卡项实时可见</td></tr>
+      <tr><td>活动</td><td class="trad">做活动要算半天，容易漏</td><td class="meli">配置一次，收银自动参与</td></tr>
+      <tr><td>报表</td><td class="trad">月底翻单据，凭感觉决策</td><td class="meli">数据看板，趋势业绩全清楚</td></tr>
+      <tr><td>提醒</td><td class="trad">卡到期了才知道</td><td class="meli">余额不足、沉睡会员自动提醒</td></tr>
+    </table>
+  </section>
+
+  <!-- pricing -->
+  <section class="sec">
+    <div class="sec-head">
+      <div class="sec-eyebrow">Simple pricing</div>
+      <h2>一个 Co-CEO 的工资，<span class="hl">请得动</span></h2>
+      <div class="d">按门店规模选，随时升级，数据无缝迁移</div>
+    </div>
+    <div class="price-grid">
+      <div class="price">
+        <div class="p-name">单店版</div>
+        <div class="p-price">¥360<small>/年</small></div>
+        <div class="p-note">适合 1 家门店 · 每天约 1 元</div>
+        <ul>
+          <li>收银开单 · 自动算价</li>
+          <li>会员储值 / 等级积分</li>
+          <li>卡项套餐</li>
+          <li>预约排班</li>
+          <li>经营看板</li>
+        </ul>
+      </div>
+      <div class="price hot">
+        <div class="flag">最受欢迎</div>
+        <div class="p-name">连锁版</div>
+        <div class="p-price">¥1200<small>/年</small></div>
+        <div class="p-note">适合 2-5 家门店</div>
+        <ul>
+          <li>包含单店版全部功能</li>
+          <li>多店数据总览</li>
+          <li>营销活动中心</li>
+          <li>员工业绩排行</li>
+          <li>数据分析报表</li>
+          <li>专属客服支持</li>
+        </ul>
+      </div>
+      <div class="price">
+        <div class="p-name">体验版</div>
+        <div class="p-price">免费</div>
+        <div class="p-note">先试用，满意再续</div>
+        <ul>
+          <li>全部功能可体验</li>
+          <li>真实数据演示</li>
+          <li>一对一开通指导</li>
+          <li>数据迁移协助</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- final cta -->
+  <section class="final-cta" id="contact">
+    <h2>给你的店，<br><span class="hl">招一位 Co-CEO</span></h2>
+    <div class="sub">免费开通体验 · 协助迁移现有会员数据 · 满意再付费</div>
+    <div class="contact-box">
+      <div class="row"><span class="k">开通体验</span><span class="v">联系我，即刻开通</span></div>
+      <div class="row"><span class="k">服务门店</span><span class="v">美发门店 · 会员管理</span></div>
+      <div class="row"><span class="k">我的电话</span><span class="v">138-0000-0000</span></div>
+      <div class="row"><span class="k">我的微信</span><span class="v">加微信 · 看更多演示</span></div>
+    </div>
+  </section>
+
+  <footer>Méli 美发管家 · Co-CEO for Salon · 2026</footer>
+</div>
+
+<script>
+  var btns = document.querySelectorAll('.screen-tabs button');
+  var views = document.querySelectorAll('.screen-view');
+  btns.forEach(function (b) {
+    b.addEventListener('click', function () {
+      btns.forEach(function (x) { x.classList.remove('on'); });
+      views.forEach(function (v) { v.classList.remove('on'); });
+      b.classList.add('on');
+      document.querySelector('.screen-view[data-view="' + b.getAttribute('data-v') + '"]').classList.add('on');
+    });
+  });
+</script>
+</body>
+</html>
